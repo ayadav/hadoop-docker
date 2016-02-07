@@ -1,19 +1,9 @@
 #Apache Hadoop 2.7.2 Docker image
 
-[![DockerPulls](https://img.shields.io/docker/pulls/sequenceiq/hadoop-docker.svg)](https://registry.hub.docker.com/u/sequenceiq/hadoop-docker/)
-[![DockerStars](https://img.shields.io/docker/stars/sequenceiq/hadoop-docker.svg)](https://registry.hub.docker.com/u/sequenceiq/hadoop-docker/)
+[![DockerPulls](https://img.shields.io/docker/pulls/kimptoc/hadoop-docker.svg)](https://registry.hub.docker.com/u/kimptoc/hadoop-docker/)
+[![DockerStars](https://img.shields.io/docker/stars/kimptoc/hadoop-docker.svg)](https://registry.hub.docker.com/u/kimptoc/hadoop-docker/)
 
-
-
-_Note: this is the master branch - for a particular Hadoop version always check the related branch_
-
-A few weeks ago we released an Apache Hadoop 2.3 Docker image - this quickly become the most [popular](https://registry.hub.docker.com/search?q=hadoop&s=downloads) Hadoop image in the Docker [registry](https://registry.hub.docker.com/).
-
-
-Following the success of our previous Hadoop Docker [images](https://registry.hub.docker.com/u/sequenceiq/hadoop-docker/), the feedback and feature requests we received aligned with the Hadoop release cycle, so we have released an Apache Hadoop 2.7.2 Docker image - same as the previous version, it's available as a trusted and automated build on the official Docker [registry](https://registry.hub.docker.com/).
-
-
-_FYI: All the former Hadoop releases (2.3, 2.4.0, 2.4.1, 2.5.0, 2.5.1, 2.5.2, 2.6.0) are available in the GitHub branches or our [Docker Registry](https://registry.hub.docker.com/u/sequenceiq/hadoop-docker/) - check the tags._
+Fork of the great sequenceiq build - https://github.com/sequenceiq/hadoop-docker - providing access to 2.7.2
 
 # Build the image
 
@@ -55,8 +45,5 @@ bin/hdfs dfs -cat output/*
 
 ## Hadoop native libraries, build, Bintray, etc
 
-The Hadoop build process is no easy task - requires lots of libraries and their right version, protobuf, etc and takes some time - we have simplified all these, made the build and released a 64b version of Hadoop nativelibs on this [Bintray repo](https://bintray.com/sequenceiq/sequenceiq-bin/hadoop-native-64bit/2.7.2/view/files). Enjoy.
+Not provided in this build - its a pure java version, so not as fast as it could be :)
 
-## Automate everything
-
-As we have mentioned previousely, a Docker file was created and released in the official [Docker repository](https://registry.hub.docker.com/u/sequenceiq/hadoop-docker/)
