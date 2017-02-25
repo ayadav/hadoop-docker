@@ -4,6 +4,8 @@
 
 $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
 
+$HIVE_HOME/conf/hive-env.sh
+
 rm /tmp/*.pid
 
 # installing libraries if any - (resource urls added comma separated to the ACP system variable)
@@ -16,6 +18,7 @@ sed s/HOSTNAME/$HOSTNAME/ /usr/local/hadoop/etc/hadoop/core-site.xml.template > 
 service sshd start
 $HADOOP_PREFIX/sbin/start-dfs.sh
 $HADOOP_PREFIX/sbin/start-yarn.sh
+
 
 if [[ $1 == "-d" ]]; then
   while true; do sleep 1000; done
