@@ -4,6 +4,8 @@
 
 $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
 
+$HIVE_HOME/conf/hive-env.sh
+
 rm /tmp/*.pid
 
 # installing libraries if any - (resource urls added comma separated to the ACP system variable)
