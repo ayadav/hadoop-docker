@@ -1,4 +1,4 @@
-# Creates pseudo distributed hadoop 2.7.2
+# Creates pseudo distributed hadoop 2.7.3
 #
 # docker build -t sequenceiq/hadoop .
 
@@ -6,6 +6,8 @@ FROM sequenceiq/pam:centos-6.5
 MAINTAINER SequenceIQ
 
 USER root
+
+RUN yum update -y
 
 # install dev tools
 RUN yum clean all; \
@@ -39,9 +41,9 @@ RUN mkdir -p /tmp/native
 RUN curl -L https://github.com/sequenceiq/docker-hadoop-build/releases/download/v2.7.1/hadoop-native-64-2.7.1.tgz | tar -xz -C /tmp/native
 
 # hadoop
-# RUN curl -s http://www.eu.apache.org/dist/hadoop/common/hadoop-2.7.2/hadoop-2.7.2.tar.gz | tar -xz -C /usr/local/
-RUN curl -s http://ftp.riken.jp/net/apache/hadoop/common/hadoop-2.7.2/hadoop-2.7.2.tar.gz | tar -xz -C /usr/local/
-RUN cd /usr/local && ln -s ./hadoop-2.7.2 hadoop
+# RUN curl -s http://www.eu.apache.org/dist/hadoop/common/hadoop-2.7.3/hadoop-2.7.3.tar.gz | tar -xz -C /usr/local/
+RUN curl -s http://ftp.riken.jp/net/apache/hadoop/common/hadoop-2.7.3/hadoop-2.7.3.tar.gz | tar -xz -C /usr/local/
+RUN cd /usr/local && ln -s ./hadoop-2.7.3 hadoop
 
 ENV HADOOP_PREFIX /usr/local/hadoop
 ENV HADOOP_COMMON_HOME /usr/local/hadoop
