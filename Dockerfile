@@ -22,9 +22,6 @@ RUN cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys
 
 
 # java
-# RUN curl -LO 'http://download.oracle.com/otn-pub/java/jdk/7u71-b14/jdk-7u71-linux-x64.rpm' -H 'Cookie: oraclelicense=accept-securebackup-cookie'
-# RUN rpm -i jdk-7u71-linux-x64.rpm
-# RUN rm jdk-7u71-linux-x64.rpm
 RUN curl -LO 'http://download.oracle.com/otn-pub/java/jdk/8u121-b13/e9e7ea248e2c4826b92b3f075a80e441/jdk-8u121-linux-x64.rpm' -H 'Cookie: oraclelicense=accept-securebackup-cookie'
 RUN rpm -i jdk-8u121-linux-x64.rpm
 RUN rm jdk-8u121-linux-x64.rpm
@@ -39,7 +36,6 @@ RUN mkdir -p /tmp/native
 RUN curl -L https://github.com/sequenceiq/docker-hadoop-build/releases/download/v2.7.1/hadoop-native-64-2.7.1.tgz | tar -xz -C /tmp/native
 
 # hadoop
-# RUN curl -s http://www.eu.apache.org/dist/hadoop/common/hadoop-2.7.2/hadoop-2.7.2.tar.gz | tar -xz -C /usr/local/
 RUN curl -s http://ftp.riken.jp/net/apache/hadoop/common/hadoop-2.7.2/hadoop-2.7.2.tar.gz | tar -xz -C /usr/local/
 RUN cd /usr/local && ln -s ./hadoop-2.7.2 hadoop
 
@@ -69,8 +65,8 @@ ADD yarn-site.xml $HADOOP_PREFIX/etc/hadoop/yarn-site.xml
 RUN $HADOOP_PREFIX/bin/hdfs namenode -format
 
 # fixing the libhadoop.so like a boss
-#RUN rm -rf /usr/local/hadoop/lib/native
-#RUN mv /tmp/native /usr/local/hadoop/lib
+RUN rm -rf /usr/local/hadoop/lib/native
+RUN mv /tmp/native /usr/local/hadoop/lib
 
 ADD ssh_config /root/.ssh/config
 RUN chmod 600 /root/.ssh/config
@@ -84,12 +80,6 @@ RUN chown root:root /root/.ssh/config
 #
 # ADD supervisord.conf /etc/supervisord.conf
 
-ADD bootstrap.sh /etc/bootstrap.sh
-RUN chown root:root /etc/bootstrap.sh
-RUN chmod 700 /etc/bootstrap.sh
-
-ENV BOOTSTRAP /etc/bootstrap.sh
-
 # workingaround docker.io build error
 RUN ls -la /usr/local/hadoop/etc/hadoop/*-env.sh
 RUN chmod +x /usr/local/hadoop/etc/hadoop/*-env.sh
@@ -100,8 +90,37 @@ RUN sed  -i "/^[^#]*UsePAM/ s/.*/#&/"  /etc/ssh/sshd_config
 RUN echo "UsePAM no" >> /etc/ssh/sshd_config
 RUN echo "Port 2122" >> /etc/ssh/sshd_config
 
+RUN curl -s https://archive.apache.org/dist/hive/hive-1.0.0/apache-hive-1.0.0-bin.tar.gz | tar -xz -C /usr/local/
+RUN cd /usr/local && ln -s ./apache-hive-1.0.0-bin hive
+
+ENV HIVE_HOME /usr/local/hive
+
 RUN service sshd start && $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh && $HADOOP_PREFIX/sbin/start-dfs.sh && $HADOOP_PREFIX/bin/hdfs dfs -mkdir -p /user/root
-RUN service sshd start && $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh && $HADOOP_PREFIX/sbin/start-dfs.sh && $HADOOP_PREFIX/bin/hdfs dfs -put $HADOOP_PREFIX/etc/hadoop/ input
+RUN service sshd start && \
+    $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh && \
+    $HADOOP_PREFIX/sbin/start-dfs.sh && \
+    $HADOOP_PREFIX/bin/hdfs dfs -put $HADOOP_PREFIX/etc/hadoop/ input && \
+    $HADOOP_PREFIX/bin/hadoop fs -mkdir /tmp && \
+    $HADOOP_PREFIX/bin/hadoop fs -mkdir /user/hive && \
+    $HADOOP_PREFIX/bin/hadoop fs -mkdir /user/hive/warehous && \
+    $HADOOP_PREFIX/bin/hadoop fs -chmod g+w /tmp && \
+    $HADOOP_PREFIX/bin/hadoop fs -chmod g+w /user/hive && \
+    $HADOOP_PREFIX/bin/hadoop fs -chmod g+w /user/hive/warehous
+
+ADD hive/hive-env.sh $HIVE_HOME/conf/hive-env.sh
+RUN chown root:root $HIVE_HOME/conf/hive-env.sh
+RUN chmod 700 $HIVE_HOME/conf/hive-env.sh
+
+ADD hive/hive-default.xml $HIVE_HOME/conf/hive-default.xml
+
+ENV PATH $PATH:$HIVE_HOME/bin:$HADOOP_PREFIX/bin:$HADOOP_PREFIX/sbin
+
+ADD bootstrap.sh /etc/bootstrap.sh
+RUN chown root:root /etc/bootstrap.sh
+RUN chmod 700 /etc/bootstrap.sh
+
+ENV BOOTSTRAP /etc/bootstrap.sh
+
 
 CMD ["/etc/bootstrap.sh", "-d"]
 
