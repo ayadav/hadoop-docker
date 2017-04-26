@@ -7,6 +7,8 @@ MAINTAINER SequenceIQ
 
 USER root
 
+RUN yum update -y | true
+
 # install dev tools
 RUN yum clean all; \
     rpm --rebuilddb; \
